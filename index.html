@@ -173,6 +173,37 @@ g.ev.play .ink,g.ev.play .mus{fill:#e0742d} g.ev.play .stk{stroke:#e0742d}
 .warn-l{margin:6px 0 0;padding-left:18px;font-size:13px;color:var(--ink2)}
 .warn-l li{margin:2px 0}
 
+/* tile and hand-sign views: the same score, read as solfege tiles or Curwen signs */
+.tl{display:grid;gap:20px;padding:2px 2px 8px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.tl-line{display:flex;align-items:flex-start}
+.tl-names{display:grid;padding-top:18px;flex:none;width:70px}
+.tl-names div{height:var(--rh);display:flex;align-items:flex-start;padding-top:calc(var(--bh)/2 - 9px);font:700 12px var(--f-body);color:var(--muted);overflow:hidden;white-space:nowrap}
+.tl-m{flex:none;padding:0 6px 0 6px;border-right:1.5px solid var(--ink2)}
+.tl-m.last{border-right:5px double var(--ink2)}
+.tl-mn{font:600 10px var(--f-body);color:var(--muted);height:18px;line-height:18px}
+.tl-row{display:flex;gap:4px;height:var(--rh);align-items:flex-start}
+.tl-t{flex:none;display:flex;flex-direction:column;gap:3px;cursor:pointer;position:relative}
+.tl-box{height:var(--bh);border-radius:12px;border:2px solid var(--c,#64748b);background:color-mix(in srgb,var(--c,#64748b) 18%,var(--surface));display:grid;place-items:center;align-content:center;gap:3px;overflow:hidden;font:800 19px var(--f-body);color:var(--ink);transition:transform .1s,background .1s}
+.tl-t:hover .tl-box{transform:translateY(-1px)}
+.tl-t.chr .tl-box{border-style:dashed}
+.tl-t.tied .tl-box{border-top-right-radius:3px;border-bottom-right-radius:3px}
+.tl-t.cont .tl-box{border-top-left-radius:3px;border-bottom-left-radius:3px;border-left-style:dotted;background:color-mix(in srgb,var(--c,#64748b) 8%,var(--surface))}
+.tl-t.rest .tl-box{border:1.5px dashed var(--line);background:transparent;color:var(--muted);font:600 12px var(--f-body)}
+.tl-t.sel .tl-box{background:var(--c,var(--brand));border-color:var(--c,var(--brand));color:#fff;box-shadow:0 0 0 3px var(--royal-tint2)}
+.tl-t.rest.sel .tl-box{background:var(--royal-tint);border:2px solid var(--brand);color:var(--royal)}
+.tl-t.play .tl-box{background:var(--c,#e0742d);color:#fff;box-shadow:0 0 0 3px #e0742d}
+.tl-sub{font:600 11px var(--f-body);color:var(--ink2);text-align:center;white-space:nowrap;overflow:hidden;height:13px;line-height:13px}
+.tl-sub.l{color:var(--muted);font-weight:700}
+.tl-caret{position:absolute;top:-4px;width:3px;height:calc(var(--bh) + 8px);background:var(--brand);border-radius:2px;margin-left:-4px;pointer-events:none;animation:tlb 1.1s steps(2) infinite}
+@keyframes tlb{50%{opacity:.2}}
+.tl.signs .tl-box{border-color:var(--line);background:var(--surface-2)}
+.tl.signs .tl-t.chr .tl-box{border-color:var(--c)}
+.tl.signs .tl-t.sel .tl-box{background:var(--royal-tint);border-color:var(--brand);color:var(--ink)}
+.tl.signs .tl-t.play .tl-box{background:var(--royal-tint2);border-color:#e0742d}
+.tl-box .hs-img{width:min(66px,86%);height:calc(var(--bh) - 30px);background:var(--ink)}
+.tl-cap{font:800 13px/1 var(--f-body);color:var(--c,var(--ink2))}
+.tl-ns{font:800 15px var(--f-body);color:var(--c)}
+.tl-ns small{display:block;font:600 9.5px var(--f-body);color:var(--muted)}
 @media print{.band,.tools,.dock,.side,.hint,.toast{display:none!important}.main{display:block;padding:0}.paper{border:0;padding:0}body{background:#fff}}
 </style>
 </head>
@@ -217,6 +248,9 @@ g.ev.play .ink,g.ev.play .mus{fill:#e0742d} g.ev.play .stk{stroke:#e0742d}
   <div class="tgroup"><span class="lab">Type</span>
     <div class="seg" role="group" aria-label="Typing enters"><button type="button" data-entry="abc" aria-pressed="true" title="Type A–G for note names">A–G</button><button type="button" data-entry="sol" aria-pressed="false" title="Type d r m f s l t for solfege">Solfege</button></div>
   </div>
+  <div class="tgroup"><span class="lab">View</span>
+    <div class="seg" role="group" aria-label="Show the music as"><button type="button" data-view="staff" aria-pressed="true" title="Standard notation on the staff">Staff</button><button type="button" data-view="tiles" aria-pressed="false" title="Solfege tiles, colored like the Measure Up! games">Tiles</button><button type="button" data-view="signs" aria-pressed="false" title="Curwen hand signs, the way students see Hand Sign Reading">Hand signs</button></div>
+  </div>
   <div class="tgroup"><span class="lab">Show</span>
     <button class="tool" type="button" id="sSol" title="Solfege under the notes">do</button>
     <button class="tool" type="button" id="sRhy" title="Rhythm syllables under the notes">Tah</button>
@@ -246,7 +280,7 @@ g.ev.play .ink,g.ev.play .mus{fill:#e0742d} g.ev.play .stk{stroke:#e0742d}
         <div style="font-size:12.5px;color:var(--muted);max-width:240px" id="midiState"></div>
       </div>
     </div>
-    <p class="hint">Click the staff to place a note, or type <kbd>A</kbd>–<kbd>G</kbd> (or <kbd>d r m f s l t</kbd> in Solfege mode). <kbd>↑</kbd><kbd>↓</kbd> move the selected note a step (<kbd>Shift</kbd> half step, <kbd>Ctrl</kbd> octave). <kbd>←</kbd><kbd>→</kbd> move between notes. <kbd>Delete</kbd> turns a note into a rest. <kbd>Space</kbd> plays.</p>
+    <p class="hint" id="hint">Click the staff to place a note, or type <kbd>A</kbd>–<kbd>G</kbd> (or <kbd>d r m f s l t</kbd> in Solfege mode). <kbd>↑</kbd><kbd>↓</kbd> move the selected note a step (<kbd>Shift</kbd> half step, <kbd>Ctrl</kbd> octave). <kbd>←</kbd><kbd>→</kbd> move between notes. <kbd>Delete</kbd> turns a note into a rest. <kbd>Space</kbd> plays.</p>
   </section>
   <aside class="side" id="side">
     <div class="card">
@@ -419,6 +453,7 @@ function measureLayout(S,acc){const mi=meterInfo(S.meter),M=nMeas(S),res=[];
 function solLabel(S,P,e){if(P.clef==='perc')return'';return solOf(e.p,doOf(S));}
 
 function renderScore(){
+  if(A.view==='tiles'||A.view==='signs'){renderTiles();return;}
   const S=A.S,mi=meterInfo(S.meter),paper=$('#paper'),W=Math.max(520,paper.clientWidth-30),acc=accidentals(S),ML=measureLayout(S,acc),M=nMeas(S);
   const nameW=S.parts.length>1?58:8,keyW=Math.abs(S.key.fifths)*9+(S.key.fifths?8:0);
   /* systems: as many measures as fit on a line */
@@ -537,8 +572,67 @@ function drawStems(svg,heads,mi,mid,perc){
       if(b===3)svgEl('path',{d:up?`M${sx} ${ey+7}c1 6 9 8 7 17`:`M${sx} ${ey-7}c1-6 9-8 7-17`,class:'stk','stroke-width':1.7},h.g);}});
 }
 
+/* ================= Composer — tile and hand-sign views =================
+   The same score, drawn the way Measure Up! students read it: solfege tiles in the Repeat After Mi colors,
+   or Curwen hand signs. A tile's width follows its length (exactly in proportion within a measure), so the
+   rhythm still reads, and parts line up under each other. Clicking and typing edit the score just as on the staff. */
+const SOL_COLOR={do:'#2563eb',re:'#16a34a',mi:'#dc2626',fa:'#d97706',sol:'#7c3aed',la:'#0891b2',ti:'#db2777',hi:'#65a30d'};
+const SOL_PARENT={di:'do',ra:'re',ri:'re',me:'mi',fi:'fa',se:'sol',si:'sol',le:'la',li:'la',te:'ti'};
+/* raised syllables (di ri fi si li) get a dashed border; me le te stay solid (they are scale notes in minor) */
+function solCol(syl,high){if(syl==='do'&&high)return{c:SOL_COLOR.hi,chr:false};if(SOL_COLOR[syl]&&syl!=='hi')return{c:SOL_COLOR[syl],chr:false};
+  if(SOL_PARENT[syl])return{c:SOL_COLOR[SOL_PARENT[syl]],chr:/^(di|ri|fi|si|li)$/.test(syl)};return{c:'#64748b',chr:false};}
+/* the do a part mostly sits above: the octave that puts the most notes between do and ti */
+function homeDo(S,P){const dO=doOf(S),dns=[];P.measures.forEach(m=>m.forEach(e=>{if(!e.r)dns.push(dnOf(e.p));}));if(!dns.length)return null;let best=null;
+  for(let oct=1;oct<=7;oct++){const b=oct*7+dO.step,n=dns.filter(d=>d>=b&&d<b+7).length,lo=dns.filter(d=>d<b).length;if(!best||n>best.n||(n===best.n&&lo<best.lo))best={b,n,lo};}
+  return best.b;}
+function rhyLabel(P,m,i,t,mi){let len=P.measures[m][i].d,q=i,mm=m,ee=P.measures[m][i];
+  while(ee.tie){const nxt=P.measures[mm][q+1]||(P.measures[mm+1]||[])[0];if(!nxt||nxt.r)break;if(!P.measures[mm][q+1]){mm++;q=0;}else q++;len+=nxt.d;ee=nxt;}return rhySyl(t,len,mi);}
+function renderTiles(){
+  const S=A.S,mi=meterInfo(S.meter),paper=$('#paper'),signs=A.view==='signs',M=nMeas(S),dO=doOf(S);
+  const multi=S.parts.length>1,nameW=multi?70:0,W=Math.max(300,paper.clientWidth-34-nameW);
+  const bh=signs?86:50,minW=signs?70:42,base=(signs?86:64)/12;
+  const nSub=(A.show.rhy?1:0)+(A.show.abc?1:0),rh=bh+4+nSub*16+4;
+  const homes=S.parts.map(P=>P.clef==='perc'?null:homeDo(S,P)),evSt=S.parts.map(P=>P.measures.map(starts));
+  /* px per tick for each measure: proportional inside the measure, wide enough for its shortest note */
+  const k=[],mw=[];for(let m=0;m<M;m++){let minD=48;S.parts.forEach(P=>P.measures[m].forEach(e=>{minD=Math.min(minD,e.d);}));k[m]=Math.max(base,minW/minD);mw[m]=mi.len*k[m]+13;}
+  const lines=[];let cur=null;for(let m=0;m<M;m++){if(!cur||cur.w+mw[m]>W&&cur.ms.length){cur={ms:[],w:0};lines.push(cur);}cur.ms.push(m);cur.w+=mw[m];}
+  const tile=(pi,m,i)=>{const P=S.parts[pi],meas=P.measures[m],e=meas[i],t=evSt[pi][m][i],w=Math.max(10,e.d*k[m]-4);
+    const prev=i>0?meas[i-1]:(m>0?P.measures[m-1][P.measures[m-1].length-1]:null);
+    const cont=!e.r&&prev&&!prev.r&&prev.tie&&midiOf(prev.p)===midiOf(e.p);
+    const sel=A.sel&&A.cur.pi===pi&&A.cur.mi===m&&A.cur.t===t;
+    let cls='ev tl-t'+(sel?' sel':'')+(e.r?' rest':'')+(cont?' cont':'')+(!e.r&&e.tie?' tied':''),style='width:'+w+'px',box='',subs='',aria='';
+    if(e.r){box=w>40?'rest':'';aria='Rest, '+DUR_WORD[e.d];}
+    else if(P.clef==='perc'){style+=';--c:#64748b';box=cont?'':esc(rhyLabel(P,m,i,t,mi));aria='Beat, '+DUR_WORD[e.d];}
+    else{const syl=solOf(e.p,dO),o=Math.floor((dnOf(e.p)-homes[pi])/7),col=solCol(syl,o>0);style+=';--c:'+col.c;if(col.chr)cls+=' chr';
+      const mark=o>0?'′'.repeat(o):o<0?','.repeat(-o):'',arrow=o>0?' ↑':o<0?' ↓':'';aria=syl+(o>0?' high':o<0?' low':'')+', '+DUR_WORD[e.d]+(cont?', tied':'');
+      if(cont)box='<span style="opacity:.55">—</span>';
+      else if(!signs)box=esc(syl+mark);
+      else if(HS_IMG[syl])box=`<span class="hs-img hs-${syl}"></span><span class="tl-cap">${A.show.sol?esc(syl):''}${arrow}</span>`;
+      else box=`<span class="tl-ns">${esc(syl)}${arrow}<small>no sign</small></span>`;}
+    if(A.show.rhy)subs+=`<span class="tl-sub">${!e.r&&!cont?esc(rhyLabel(P,m,i,t,mi)):''}</span>`;
+    if(A.show.abc)subs+=`<span class="tl-sub l">${!e.r&&!cont&&P.clef!=='perc'?STEPS[e.p.step]+(['𝄫','♭','','♯','𝄪'][(e.p.alt||0)+2]):''}</span>`;
+    let caret='';if(!A.sel&&!A.playing&&A.cur.pi===pi&&A.cur.mi===m&&A.cur.t>=t&&A.cur.t<t+e.d)caret=`<span class="tl-caret" style="left:${((A.cur.t-t)/e.d*100).toFixed(1)}%"></span>`;
+    return`<div class="${cls}" style="${style}" data-pi="${pi}" data-mi="${m}" data-ei="${i}" role="button" aria-label="${esc(aria)}"><div class="tl-box">${box}</div>${subs}${caret}</div>`;};
+  paper.innerHTML=`<div class="tl${signs?' signs':''}" style="--bh:${bh}px;--rh:${rh}px" role="group" aria-label="${esc((S.title||'Untitled')+' — '+(signs?'hand signs':'solfege tiles'))}">`+lines.map(L=>
+    `<div class="tl-line">${multi?`<div class="tl-names">${S.parts.map((P,pi)=>`<div>${esc((P.name||'Part '+(pi+1)).slice(0,10))}</div>`).join('')}</div>`:''}`+
+    L.ms.map(m=>`<div class="tl-m${m===M-1?' last':''}" style="width:${mw[m]}px"><div class="tl-mn">${m+1}</div>${S.parts.map((P,pi)=>`<div class="tl-row">${P.measures[m].map((e,i)=>tile(pi,m,i)).join('')}</div>`).join('')}</div>`).join('')+
+    '</div>').join('')+'</div>';
+  A.svg=null;A.hit=[];A.evPos={};$$('.tl-t',paper).forEach(el=>{A.evPos[el.dataset.pi+'.'+el.dataset.mi+'.'+el.dataset.ei]=el;});}
+function onTileClick(ev){const el=ev.target.closest&&ev.target.closest('.tl-t');$('#paper').focus({preventScroll:true});if(!el)return;
+  const pi=+el.dataset.pi,m=+el.dataset.mi,i=+el.dataset.ei,meas=A.S.parts[pi].measures[m],e=meas[i],s0=starts(meas)[i];A.last=null;
+  if(!e.r){A.cur={pi,mi:m,t:s0};A.sel=true;renderScore();playNote(e.p,0.3);return;}
+  /* a rest: put the cursor where you clicked inside it, so the next note you type goes there */
+  const r=el.getBoundingClientRect(),frac=Math.max(0,Math.min(0.999,(ev.clientX-r.left)/Math.max(1,r.width))),step=Math.min(curDur(),e.d);
+  A.cur={pi,mi:m,t:s0+Math.floor(frac*e.d/step)*step};A.sel=false;renderScore();}
+const HINTS={staff:'Click the staff to place a note, or type <kbd>A</kbd>–<kbd>G</kbd> (or <kbd>d r m f s l t</kbd> in Solfege mode). <kbd>↑</kbd><kbd>↓</kbd> move the selected note a step (<kbd>Shift</kbd> half step, <kbd>Ctrl</kbd> octave). <kbd>←</kbd><kbd>→</kbd> move between notes. <kbd>Delete</kbd> turns a note into a rest. <kbd>Space</kbd> plays.',
+  tiles:'Type <kbd>d r m f s l t</kbd> or tap the solfege buttons to add tiles; the length buttons set how long each one is. Click a tile to select it, or click a rest to put the cursor there. <kbd>↑</kbd><kbd>↓</kbd> change the selected note (<kbd>Shift</kbd> half step, <kbd>Ctrl</kbd> octave). <kbd>Delete</kbd> makes a rest. ′ marks the high octave, a comma the low one. <kbd>Space</kbd> plays.',
+  signs:'Type <kbd>d r m f s l t</kbd> or tap the solfege buttons to add signs. Click a sign to select it, or click a rest to put the cursor there. <kbd>Ctrl</kbd>+<kbd>↑</kbd><kbd>↓</kbd> moves a note up or down an octave (↑ ↓ on the sign, as students see it). Turn <b>do</b> off under Show to see the signs alone. Hand-sign exercises use do through ti in major keys. <kbd>Space</kbd> plays.'};
+function setView(v){if(!HINTS[v])v='staff';const was=A.view;A.view=v;
+  if(v!=='staff'&&was==='staff'&&A.entry!=='sol'){A.entry='sol';toast('Typing now enters solfege (d r m f s l t). Switch back under Type.');}
+  paintTools();savePrefs();renderScore();}
+
 /* ================= Composer — editing, keyboard and mouse entry, playback ================= */
-const A={S:null,cur:{pi:0,mi:0,t:0},sel:false,dur:12,dot:false,entry:'abc',show:{sol:true,rhy:false,abc:false},undo:[],redo:[],kbOct:4,playing:false,dirty:false};
+const A={S:null,cur:{pi:0,mi:0,t:0},sel:false,dur:12,dot:false,entry:'abc',show:{sol:true,rhy:false,abc:false},view:'staff',undo:[],redo:[],kbOct:4,playing:false,dirty:false};
 
 function snapshot(){A.undo.push(JSON.stringify(A.S));if(A.undo.length>120)A.undo.shift();A.redo=[];}
 function changed(){A.dirty=true;saveDraft();renderScore();refreshPanel(false);}
@@ -617,7 +711,7 @@ function pointToSlot(ev){const r=A.svg.getBoundingClientRect(),x=ev.clientX-r.le
   if(e.r){const span=h.ends[i]-h.xs[i],frac=Math.max(0,Math.min(0.999,(x-h.xs[i]+6)/Math.max(1,span))),step=Math.min(curDur(),e.d);t=st[i]+Math.floor(frac*e.d/step)*step;}
   const dn=h.perc?30:Math.round(h.bd+(h.top+4*SP-y)/(SP/2))-h.shift;
   return{pi:h.pi,mi:h.m,t,dn,x:i===st.indexOf(t)?h.xs[i]:h.xs[i]+(t-st[i])/e.d*(h.ends[i]-h.xs[i]),y:h.perc?h.top+2*SP:h.top+4*SP-(dn+h.shift-h.bd)*SP/2};}
-function onPaperClick(ev){const g=ev.target.closest&&ev.target.closest('g.ev');$('#paper').focus({preventScroll:true});
+function onPaperClick(ev){if(A.view==='tiles'||A.view==='signs'){onTileClick(ev);return;}const g=ev.target.closest&&ev.target.closest('g.ev');$('#paper').focus({preventScroll:true});
   if(g){const pi=+g.dataset.pi,mi=+g.dataset.mi,ei=+g.dataset.ei,e=A.S.parts[pi].measures[mi][ei];
     if(!e.r||!pointToSlot(ev)||ev.detail===0){A.last=null;A.cur={pi,mi,t:starts(A.S.parts[pi].measures[mi])[ei]};A.sel=true;renderScore();if(!e.r)playNote(e.p,0.3);return;}}
   const s=pointToSlot(ev);if(!s)return;A.cur={pi:s.pi,mi:s.mi,t:s.t};A.sel=false;
@@ -644,7 +738,9 @@ function onKey(e){const tag=(e.target.tagName||'').toLowerCase();if(tag==='input
   if(k==='0'||(k==='r'||k==='R')&&A.entry!=='sol'){enterRest();return;}
   if(k==='+'||k==='#'){setAcc(1);return;} if(k==='-'||k==='_'){setAcc(-1);return;} if(k==='='){setAcc(0);return;}
   if(k==='t'&&A.entry!=='sol'||k==='T'){toggleTie();return;}
-  if(A.entry==='sol'){const map={d:'do',r:'re',m:'mi',f:'fa',s:'sol',l:'la',t:'ti'};if(map[k.toLowerCase()]&&!e.altKey){e.preventDefault();enterSol(map[k.toLowerCase()]);}return;}
+  if(A.entry==='sol'){const map={d:'do',r:'re',m:'mi',f:'fa',s:'sol',l:'la',t:'ti'};if(map[k.toLowerCase()]&&!e.altKey){e.preventDefault();let syl=map[k.toLowerCase()];
+    /* do-based minor: m l t type the minor scale's me le te (ti is still on the solfege buttons, for harmonic minor) */
+    if(A.S.key.mode==='minor'&&(A.S.minorSyl||'do')==='do')syl={mi:'me',la:'le',ti:'te'}[syl]||syl;enterSol(syl);}return;}
   if(/^[a-gA-G]$/.test(k)){e.preventDefault();enterLetter(k);}
 }
 
@@ -666,10 +762,10 @@ function play(){stopPlay();const S=A.S,mi=meterInfo(S.meter),c=actx(),bpm=Math.m
         if(!e.tie){hold.flush();hold=null;}});}if(hold)hold.flush();});
   if(A.metro){const total=(nMeas(S)-fromM)*mi.len;for(let k=0;k<total;k+=mi.beat)click(t0+k*secPerTick,k%mi.len===0);}
   A.playing=true;A.sel=false;renderScore();$('#bPlay').textContent='■ Stop';const endAt=t0+(nMeas(S)-fromM)*mi.len*secPerTick;
-  playT=setInterval(()=>{const now=c.currentTime;$$('g.ev.play',A.svg).forEach(g=>g.classList.remove('play'));
+  playT=setInterval(()=>{const now=c.currentTime;$$('.ev.play',$('#paper')).forEach(g=>g.classList.remove('play'));
     lights.forEach(l=>{if(now>=l.at&&now<l.end){const g=A.evPos[l.key];if(g)g.classList.add('play');}});if(now>endAt+0.1)stopPlay();},40);}
 function stopPlay(){if(playT){clearInterval(playT);playT=null;}if(Snd.ctx&&A.playing){const c=Snd.ctx;try{Snd.out.disconnect();}catch(e){}Snd.out=c.createDynamicsCompressor();Snd.out.connect(c.destination);}
-  A.playing=false;$('#bPlay').textContent='▶ Play';if(A.svg)$$('g.ev.play',A.svg).forEach(g=>g.classList.remove('play'));renderScore();}
+  A.playing=false;$('#bPlay').textContent='▶ Play';$$('.ev.play',$('#paper')).forEach(g=>g.classList.remove('play'));renderScore();}
 
 /* ---- the keyboard and solfege dock ---- */
 function buildPiano(){const host=$('#piano');host.innerHTML='';const lo=12*(A.kbOct+1);let wi=0;
@@ -683,7 +779,7 @@ function spellMidi(m){const sharpKey=A.S.key.fifths>=0;let best=null;
   return{step:best.s,alt:best.a,oct:Math.floor((m-best.a-STEP_PC[best.s])/12)-1};}
 function midiIn(m){$('#paper').focus({preventScroll:true});enterPitch(spellMidi(m));}
 function buildSolb(){const host=$('#solb');const L=[['do','d'],['re','d'],['mi','d'],['fa','d'],['sol','d'],['la','d'],['ti','d'],['',''],['',''],['',''],['di',''],['ri',''],['fi',''],['si',''],['li',''],['ra',''],['me',''],['se',''],['le',''],['te','']];
-  host.innerHTML=L.map(([s,c])=>s?`<button type="button" class="${c}" data-sol="${s}">${s}</button>`:'<span></span>').join('');
+  host.innerHTML=L.map(([s,c])=>{if(!s)return'<span></span>';const k=solCol(s);return`<button type="button" class="${c}" data-sol="${s}" style="border-color:${k.c};${k.chr?'border-style:dashed;':''}background:color-mix(in srgb,${k.c} ${c?18:8}%,var(--surface));color:var(--ink)">${s}</button>`;}).join('');
   host.onclick=e=>{const b=e.target.closest('[data-sol]');if(b){$('#paper').focus({preventScroll:true});enterSol(b.dataset.sol);}};}
 function initMidi(){if(!navigator.requestMIDIAccess){$('#midiState').textContent='';return;}
   navigator.requestMIDIAccess().then(acc=>{const hook=()=>{let n=0;acc.inputs.forEach(inp=>{n++;inp.onmidimessage=ev=>{const [st,note,vel]=ev.data;if((st&0xf0)===0x90&&vel>0)midiIn(note);};});
@@ -980,7 +1076,8 @@ function bindPanel(){
   $('#mFixed').onchange=e=>{A.S.meta.fixedKey=e.target.checked;A.dirty=true;saveDraft();refreshPanel();};}
 
 function paintTools(){$$('[data-dur]').forEach(b=>b.setAttribute('aria-pressed',+b.dataset.dur===A.dur));$('#tDot').setAttribute('aria-pressed',A.dot);
-  $$('[data-entry]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.entry===A.entry));
+  $$('[data-entry]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.entry===A.entry));$$('[data-view]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.view===A.view));
+  $('#sSol').title=A.view==='signs'?'Syllable under each hand sign':A.view==='tiles'?'(Tiles always show the syllable)':'Solfege under the notes';$('#hint').innerHTML=HINTS[A.view]||HINTS.staff;
   $('#sSol').setAttribute('aria-pressed',A.show.sol);$('#sRhy').setAttribute('aria-pressed',A.show.rhy);$('#sAbc').setAttribute('aria-pressed',A.show.abc);
   $('#solKey').textContent='do = '+(()=>{const d=doOf(A.S),a=mod(d.pc-STEP_PC[d.step]+6,12)-6;return STEPS[d.step]+({'-1':'♭',1:'♯'}[a]||'');})();}
 function bindTools(){
@@ -990,6 +1087,7 @@ function bindTools(){
   $('#tTie').onclick=()=>{toggleTie();$('#paper').focus({preventScroll:true});};
   $$('[data-acc]').forEach(b=>b.onclick=()=>{setAcc(+b.dataset.acc);$('#paper').focus({preventScroll:true});});
   $$('[data-entry]').forEach(b=>b.onclick=()=>{A.entry=b.dataset.entry;paintTools();savePrefs();$('#paper').focus({preventScroll:true});});
+  $$('[data-view]').forEach(b=>b.onclick=()=>{setView(b.dataset.view);$('#paper').focus({preventScroll:true});});
   $('#sSol').onclick=()=>{A.show.sol=!A.show.sol;paintTools();savePrefs();renderScore();};
   $('#sRhy').onclick=()=>{A.show.rhy=!A.show.rhy;paintTools();savePrefs();renderScore();};
   $('#sAbc').onclick=()=>{A.show.abc=!A.show.abc;paintTools();savePrefs();renderScore();};
@@ -1024,7 +1122,7 @@ async function importFile(f){try{let text;if(/\.mxl$/i.test(f.name))text=await u
 function confirmDiscard(){if(!A.dirty)return true;return confirm('Replace the music on the screen? '+(A.S.meta.id?'Your unsaved changes will be lost.':'This exercise isn’t in your library yet. Export or save it first if you want to keep it.'));}
 function newExercise(){if(!confirmDiscard())return;A.S=newScore();A.undo=[];A.redo=[];A.cur={pi:0,mi:0,t:0};A.sel=false;A.dirty=false;saveDraft();syncPanel();renderScore();paintTools();$('#title').focus();}
 function saveDraft(){try{localStorage.setItem(DRAFT_STORE,JSON.stringify({S:A.S,dirty:A.dirty}));}catch(e){}}
-function savePrefs(){try{localStorage.setItem('composer_prefs',JSON.stringify({entry:A.entry,show:A.show}));}catch(e){}}
+function savePrefs(){try{localStorage.setItem('composer_prefs',JSON.stringify({entry:A.entry,show:A.show,view:A.view}));}catch(e){}}
 
 /* ---- the library ---- */
 async function loadLib(){if(!Lib.ok())return null;try{A.lib=await Lib.post({action:'libList'});paintClasses();syncPanel();return A.lib;}catch(e){toast(e.message,5000);return null;}}
@@ -1100,7 +1198,7 @@ function asgForm(a){const L=A.lib,host=$('#lBody');const sel=a?[...a.exIds]:[],c
 function boot(){Lib.adopt();
   let d=null;try{d=JSON.parse(localStorage.getItem(DRAFT_STORE)||'null');}catch(e){}
   A.S=d&&d.S&&d.S.parts?d.S:newScore();A.dirty=!!(d&&d.dirty);if(!A.S.meta)A.S.meta=newScore().meta;
-  try{const p=JSON.parse(localStorage.getItem('composer_prefs')||'null');if(p){A.entry=p.entry||A.entry;A.show={...A.show,...p.show};}}catch(e){}
+  try{const p=JSON.parse(localStorage.getItem('composer_prefs')||'null');if(p){A.entry=p.entry||A.entry;A.show={...A.show,...p.show};if(HINTS[p.view])A.view=p.view;}}catch(e){}
   clampCursor();bindTools();bindPanel();buildPiano();buildSolb();syncPanel();paintTools();paintConn();renderScore();initMidi();
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>{for(const k in _ink)delete _ink[k];renderScore();});
   if(Lib.ok())loadLib();
